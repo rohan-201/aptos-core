@@ -232,6 +232,16 @@ Lifetime: transient
 
 
 
+<a name="0x1_features_STORAGE_SLOT_METADATA"></a>
+
+Whether metadata is tracked for newly allocated storage slots.
+
+
+<pre><code><b>const</b> <a href="features.md#0x1_features_STORAGE_SLOT_METADATA">STORAGE_SLOT_METADATA</a>: u64 = 16;
+</code></pre>
+
+
+
 <a name="0x1_features_STRUCT_CONSTRUCTORS"></a>
 
 Whether struct constructors are enabled

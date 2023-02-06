@@ -167,6 +167,9 @@ module std::features {
     /// Lifetime: transient
     const STRUCT_CONSTRUCTORS: u64 = 15;
 
+    /// Whether metadata is tracked for newly allocated storage slots.
+    const STORAGE_SLOT_METADATA: u64 = 16;
+
     // ============================================================================================
     // Feature Flag Implementation
 
