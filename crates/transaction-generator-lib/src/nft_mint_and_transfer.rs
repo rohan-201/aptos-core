@@ -16,7 +16,6 @@ use aptos_sdk::{
         LocalAccount,
     },
 };
-use async_trait::async_trait;
 use rand::{rngs::StdRng, thread_rng, SeedableRng};
 use std::collections::HashMap;
 
@@ -32,7 +31,7 @@ pub struct NFTMintAndTransfer {
 }
 
 impl NFTMintAndTransfer {
-    pub async fn new(
+    pub fn new(
         txn_factory: TransactionFactory,
         creator_address: AccountAddress,
         distribution_account: LocalAccount,
@@ -270,9 +269,8 @@ impl NFTMintAndTransferGeneratorCreator {
     }
 }
 
-#[async_trait]
 impl TransactionGeneratorCreator for NFTMintAndTransferGeneratorCreator {
-    async fn create_transaction_generator(&mut self) -> Box<dyn TransactionGenerator> {
+    fn create_transaction_generator(&mut self) -> Box<dyn TransactionGenerator> {
         Box::new(
             NFTMintAndTransfer::new(
                 self.txn_factory.clone(),
@@ -280,8 +278,7 @@ impl TransactionGeneratorCreator for NFTMintAndTransferGeneratorCreator {
                 self.distribution_accounts.pop().unwrap(),
                 self.collection_name.clone(),
                 self.token_name.clone(),
-            )
-            .await,
+            ),
         )
     }
 }

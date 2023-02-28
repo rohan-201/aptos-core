@@ -5,7 +5,6 @@ use crate::{TransactionGenerator, TransactionGeneratorCreator};
 use aptos_infallible::RwLock;
 use aptos_logger::{sample, sample::SampleRate, warn};
 use aptos_sdk::types::{transaction::SignedTransaction, LocalAccount};
-use async_trait::async_trait;
 use std::{sync::Arc, time::Duration};
 
 /// Wrapper that allows inner transaction generator to have unique accounts
@@ -30,7 +29,6 @@ impl AccountsPoolWrapperGenerator {
     }
 }
 
-#[async_trait]
 impl TransactionGenerator for AccountsPoolWrapperGenerator {
     fn generate_transactions(
         &mut self,
@@ -74,11 +72,10 @@ impl AccountsPoolWrapperCreator {
     }
 }
 
-#[async_trait]
 impl TransactionGeneratorCreator for AccountsPoolWrapperCreator {
-    async fn create_transaction_generator(&mut self) -> Box<dyn TransactionGenerator> {
+    fn create_transaction_generator(&mut self) -> Box<dyn TransactionGenerator> {
         Box::new(AccountsPoolWrapperGenerator::new(
-            self.creator.create_transaction_generator().await,
+            self.creator.create_transaction_generator(),
             self.accounts_pool.clone(),
         ))
     }
