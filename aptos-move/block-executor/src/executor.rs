@@ -405,7 +405,7 @@ where
         };
 
         if matches!(ret, Err(Error::ModulePathReadWrite)) {
-            debug!("[Execution]: Module read & written, sequential fallback");
+            println!("[Execution]: Module read & written, sequential fallback");
 
             ret = self.execute_transactions_sequential(
                 executor_arguments,
