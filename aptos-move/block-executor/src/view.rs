@@ -77,6 +77,8 @@ impl<
         use MVHashMapError::*;
         use MVHashMapOutput::*;
 
+        return ReadResult::ExecutionHalted;
+
         loop {
             match self.versioned_map.read(key, txn_idx) {
                 Ok(Version(version, v)) => {
@@ -227,9 +229,12 @@ impl<'a, T: Transaction, S: TStateView<Key = T::Key>> TStateView for LatestView<
                 },
                 // ExecutionHalted indicates that the parallel execution is halted.
                 // The read should return immediately and log the error.
-                ReadResult::ExecutionHalted => Err(anyhow::Error::new(VMStatus::Error(
+                ReadResult::ExecutionHalted => {
+                    println!("trigger storage error!");
+                    Err(anyhow::Error::new(VMStatus::Error(
                     StatusCode::STORAGE_ERROR,
-                ))),
+                    )))
+                },
                 ReadResult::None => self.get_base_value(state_key),
             },
             ViewMapKind::BTree(map) => map.get(state_key).map_or_else(
