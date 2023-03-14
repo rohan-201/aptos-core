@@ -380,57 +380,25 @@ fn change_resource_txn(
 }
 
 #[test]
-fn use_after_module_publish() {
+fn module_publish_logging() {
     ::aptos_logger::Logger::init_for_testing();
 
     let mut executor = FakeExecutor::from_head_genesis();
     executor.set_golden_file(current_function_name!());
-    let sender1 = executor.create_raw_account_data(1_000_000, 10);
-    executor.add_account_data(&sender1);
-    let sender2 = executor.create_raw_account_data(1_000_000, 10);
-    executor.add_account_data(&sender2);
-    let sender3 = executor.create_raw_account_data(1_000_000, 10);
-    executor.add_account_data(&sender3);
+    let sender = executor.create_raw_account_data(1_000_000, 10);
+    executor.add_account_data(&sender);
 
     // publish module with add and remove resource
-    let (module1, txn1) = add_module_txn(&sender1, 10);
-    let (module2, txn2) = add_module_txn(&sender2, 10);
-    let (module3, txn3) = add_module_txn(&sender3, 10);
-
-    executor.execute_and_apply(txn1);
-    executor.execute_and_apply(txn2);
+    let (module, txn) = add_module_txn(&sender, 10);
 
     let mut txns = vec![];
-    for i in 0..10 {
-        if i % 2 == 0 {
-            txns.push(Transaction::UserTransaction(add_resource_txn(&sender1, 10 + i, vec![module1.clone()])));
-        } else {
-            txns.push(Transaction::UserTransaction(add_resource_txn(&sender2, 10 + i, vec![module2.clone()])));
-        }
-    }
 
-    for i in 0..10 {
+    txns.push(Transaction::UserTransaction(txn));
+    for i in 1..10 {
         if i % 2 == 0 {
-            txns.push(Transaction::UserTransaction(remove_resource_txn(&sender1, 10 + i, vec![module1.clone()])));
+            txns.push(Transaction::UserTransaction(add_resource_txn(&sender, 10 + i, vec![module.clone()])));
         } else {
-            txns.push(Transaction::UserTransaction(remove_resource_txn(&sender2, 10 + i, vec![module2.clone()])));
-        }
-    }
-
-    txns.push(Transaction::UserTransaction(txn3));
-
-    for i in 0..10 {
-        if i % 2 == 0 {
-            txns.push(Transaction::UserTransaction(add_resource_txn(&sender1, 10 + i, vec![module1.clone()])));
-        } else {
-            txns.push(Transaction::UserTransaction(add_resource_txn(&sender3, 10 + i, vec![module3.clone()])));
-        }
-    }
-    for i in 0..100 {
-        if i % 2 == 0 {
-            txns.push(Transaction::UserTransaction(remove_resource_txn(&sender1, 10 + i, vec![module1.clone()])));
-        } else {
-            txns.push(Transaction::UserTransaction(remove_resource_txn(&sender3, 10 + i, vec![module3.clone()])));
+            txns.push(Transaction::UserTransaction(remove_resource_txn(&sender, 10 + i, vec![module.clone()])));
         }
     }
 

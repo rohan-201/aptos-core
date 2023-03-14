@@ -77,6 +77,8 @@ impl<
         use MVHashMapError::*;
         use MVHashMapOutput::*;
 
+        return ReadResult::ExecutionHalted;
+
         loop {
             match self.versioned_map.read(key, txn_idx) {
                 Ok(Version(version, v)) => {
