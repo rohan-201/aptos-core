@@ -10,7 +10,7 @@ use crate::{
 use anyhow::Result;
 use aptos_consensus_types::{
     block::Block,
-    common::{Payload, PayloadFilter, Round},
+    common::{Payload, PayloadFilter},
     executed_block::ExecutedBlock,
 };
 use aptos_crypto::HashValue;
@@ -26,12 +26,13 @@ pub type StateComputerCommitCallBackType =
 pub trait PayloadClient: Send + Sync {
     async fn pull_payload(
         &self,
-        round: Round,
         max_items: u64,
         max_bytes: u64,
         exclude: PayloadFilter,
         wait_callback: BoxFuture<'static, ()>,
         pending_ordering: bool,
+        pending_uncommitted_blocks: usize,
+        recent_max_fill_fraction: f32,
     ) -> Result<Payload, QuorumStoreError>;
 
     fn trace_payloads(&self) {}
