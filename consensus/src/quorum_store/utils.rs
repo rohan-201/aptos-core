@@ -356,10 +356,10 @@ impl ProofQueue {
                 }
             }
         }
-        counters::NUM_TOTAL_TXNS_LEFT_ON_COMMIT.observe(remaining_txns);
-        counters::NUM_TOTAL_PROOFS_LEFT_ON_COMMIT.observe(remaining_proofs);
-        counters::NUM_LOCAL_TXNS_LEFT_ON_COMMIT.observe(remaining_local_txns);
-        counters::NUM_LOCAL_PROOFS_LEFT_ON_COMMIT.observe(remaining_local_proofs);
+        counters::NUM_TOTAL_TXNS_LEFT_ON_COMMIT.observe(remaining_txns as f64);
+        counters::NUM_TOTAL_PROOFS_LEFT_ON_COMMIT.observe(remaining_proofs as f64);
+        counters::NUM_LOCAL_TXNS_LEFT_ON_COMMIT.observe(remaining_local_txns as f64);
+        counters::NUM_LOCAL_PROOFS_LEFT_ON_COMMIT.observe(remaining_local_proofs as f64);
 
         (remaining_txns, remaining_proofs)
     }
