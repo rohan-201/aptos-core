@@ -5,6 +5,7 @@
 #![allow(clippy::extra_unused_lifetimes)]
 #![allow(clippy::unused_unit)]
 
+use super::token_models::v2_token_utils::V2TokenResource;
 use crate::{
     models::move_resources::MoveResource,
     schema::{current_objects, objects},
@@ -15,8 +16,6 @@ use bigdecimal::BigDecimal;
 use field_count::FieldCount;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
-use super::token_models::v2_token_utils::V2TokenResource;
 
 #[derive(Debug, Deserialize, FieldCount, Identifiable, Insertable, Serialize)]
 #[diesel(primary_key(transaction_version, write_set_change_index))]
