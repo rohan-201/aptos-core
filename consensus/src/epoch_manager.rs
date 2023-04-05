@@ -898,12 +898,12 @@ impl EpochManager {
             | ConsensusMsg::SignedBatchInfo(_)
             | ConsensusMsg::ProofOfStoreMsg(_) => {
                 let event: UnverifiedEvent = msg.into();
-                if event.epoch() == self.epoch() {
+                if event.epoch()? == self.epoch() {
                     return Ok(Some(event));
                 } else {
                     monitor!(
                         "process_different_epoch_consensus_msg",
-                        self.process_different_epoch(event.epoch(), peer_id)
+                        self.process_different_epoch(event.epoch()?, peer_id)
                     )?;
                 }
             },

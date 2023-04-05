@@ -248,7 +248,7 @@ impl BatchGenerator {
                             (since_last_non_empty_pull_ms as f64 / 1000.0 * dynamic_pull_txn_per_s as f64) as u64, 1);
                         if let Some(batch) = self.handle_scheduled_pull(dynamic_pull_max_txn).await {
                             last_non_empty_pull = now;
-                            network_sender.broadcast_batch_msg(batch).await;
+                            network_sender.broadcast_batch_msg(vec![batch]).await;
                         }
                     }
                 }),

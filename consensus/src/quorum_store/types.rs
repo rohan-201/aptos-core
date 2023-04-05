@@ -1,7 +1,7 @@
 // Copyright © Aptos Foundation
 // SPDX-License-Identifier: Apache-2.0
 
-use anyhow::ensure;
+use anyhow::{bail, ensure};
 use aptos_consensus_types::proof_of_store::{BatchId, BatchInfo};
 use aptos_crypto::{
     hash::{CryptoHash, CryptoHasher},
@@ -259,8 +259,11 @@ impl BatchMsg {
         Ok(())
     }
 
-    pub fn epoch(&self) -> u64 {
-        self.batches[0].epoch()
+    pub fn epoch(&self) -> anyhow::Result<u64> {
+        match self.batches.first() {
+            Some(batch) => Ok(batch.epoch()),
+            None => bail!("Empty message"),
+        }
     }
 
     pub fn author(&self) -> PeerId {

@@ -50,8 +50,8 @@ impl NetworkListener {
                             .expect("Failed to send shutdown ack to QuorumStore");
                         break;
                     },
-                    VerifiedEvent::SignedBatchInfo(signed_batch_info) => {
-                        let cmd = ProofCoordinatorCommand::AppendSignature(*signed_batch_info);
+                    VerifiedEvent::SignedBatchInfo(signed_batch_infos) => {
+                        let cmd = ProofCoordinatorCommand::AppendSignature(*signed_batch_infos);
                         self.proof_coordinator_tx
                             .send(cmd)
                             .await
@@ -75,8 +75,8 @@ impl NetworkListener {
                             .await
                             .expect("Could not send remote batch");
                     },
-                    VerifiedEvent::ProofOfStoreMsg(proof) => {
-                        let cmd = ProofManagerCommand::ReceiveProof(*proof);
+                    VerifiedEvent::ProofOfStoreMsg(proofs) => {
+                        let cmd = ProofManagerCommand::ReceiveProofs(*proofs);
                         self.proof_manager_tx
                             .send(cmd)
                             .await
