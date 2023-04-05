@@ -58,18 +58,20 @@ impl NetworkListener {
                             .expect("Could not send signed_batch_info to proof_coordinator");
                     },
                     VerifiedEvent::BatchMsg(batch_msg) => {
-                        let batch = batch_msg.unpack();
+                        let author = batch_msg.author();
+                        let batches = batch_msg.unpack();
                         counters::RECEIVED_BATCH_MSG_COUNT.inc();
-                        let idx = batch.author().to_vec()[0] as usize
-                            % self.remote_batch_coordinator_tx.len();
+
+                        let idx =
+                            author.to_vec()[0] as usize % self.remote_batch_coordinator_tx.len();
                         trace!(
                             "QS: peer_id {:?},  # network_worker {}, hashed to idx {}",
-                            batch.author(),
+                            author,
                             self.remote_batch_coordinator_tx.len(),
                             idx
                         );
                         self.remote_batch_coordinator_tx[idx]
-                            .send(BatchCoordinatorCommand::NewBatch(Box::new(batch)))
+                            .send(BatchCoordinatorCommand::NewBatch(Box::new(batches)))
                             .await
                             .expect("Could not send remote batch");
                     },

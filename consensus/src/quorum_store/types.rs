@@ -234,27 +234,40 @@ impl From<Batch> for PersistedValue {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct BatchMsg {
-    batch: Batch,
+    batches: Vec<Batch>,
 }
 
 impl BatchMsg {
-    pub fn new(batch: Batch) -> Self {
-        Self { batch }
+    pub fn new(batches: Vec<Batch>) -> Self {
+        Self { batches }
     }
 
     pub fn verify(&self, peer_id: PeerId) -> anyhow::Result<()> {
-        ensure!(
-            self.batch.author() == peer_id,
-            "Batch author doesn't match sender"
-        );
-        self.batch.verify()
+        ensure!(!self.batches.is_empty(), "No batches in message");
+        let mut epoch = None;
+        for batch in self.batches.iter() {
+            ensure!(
+                batch.author() == peer_id,
+                "Batch author doesn't match sender"
+            );
+            match epoch {
+                Some(epoch) => ensure!(epoch == batch.epoch(), "Epoch mismatch within batches"),
+                None => epoch = Some(batch.epoch()),
+            }
+            batch.verify()?
+        }
+        Ok(())
     }
 
     pub fn epoch(&self) -> u64 {
-        self.batch.epoch()
+        self.batches[0].epoch()
     }
 
-    pub fn unpack(self) -> Batch {
-        self.batch
+    pub fn author(&self) -> PeerId {
+        self.batches[0].author()
+    }
+
+    pub fn unpack(self) -> Vec<Batch> {
+        self.batches
     }
 }

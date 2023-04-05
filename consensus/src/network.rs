@@ -368,7 +368,7 @@ impl QuorumStoreSender for NetworkSender {
 
     async fn broadcast_batch_msg(&mut self, batch: Batch) {
         fail_point!("consensus::send::broadcast_batch", |_| ());
-        let msg = ConsensusMsg::BatchMsg(Box::new(BatchMsg::new(batch)));
+        let msg = ConsensusMsg::BatchMsg(Box::new(BatchMsg::new(vec![batch])));
         self.broadcast(msg).await
     }
 
