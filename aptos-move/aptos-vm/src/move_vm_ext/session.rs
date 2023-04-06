@@ -35,7 +35,7 @@ use move_core_types::{
         AccountChangeSet, ChangeSet as MoveChangeSet, Event as MoveEvent, Op as MoveStorageOp,
     },
     language_storage::{ModuleId, StructTag, CORE_CODE_ADDRESS},
-    vm_status::{StatusCode, VMStatus},
+    vm_status::{StatusCode, StatusCode::UNKNOWN_INVARIANT_VIOLATION_ERROR, VMStatus},
 };
 use move_table_extension::{NativeTableContext, TableChangeSet};
 use move_vm_runtime::session::Session;
@@ -415,17 +415,31 @@ where
             match change {
                 AggregatorChange::Write(value) => {
                     let bytes = serialize(&value);
-                    let move_op = if write_set_mut.get(&state_key).is_none() {
-                        MoveStorageOp::New(bytes)
-                    } else {
-                        MoveStorageOp::Modify(bytes)
+                    let move_op = match write_set_mut.get(&state_key) {
+                        None => MoveStorageOp::New(bytes),
+                        Some(direct_write) => match direct_write {
+                            WriteOp::Creation(_) | WriteOp::CreationWithMetadata { .. } => {
+                                MoveStorageOp::New(bytes)
+                            },
+                            // FIXME(alden): is this an error?
+                            WriteOp::Modification(_)
+                            | WriteOp::ModificationWithMetadata { .. }
+                            | WriteOp::Deletion
+                            | WriteOp::DeletionWithMetadata { .. } => {
+                                return Err(VMStatus::Error(
+                                    UNKNOWN_INVARIANT_VIOLATION_ERROR,
+                                    Some("Direct write to aggregator value".to_string()),
+                                ))
+                            },
+                        },
                     };
-                    let write_op =
-                        woc.convert(&state_key, move_op, false)?;
+
+                    let write_op = woc.convert(&state_key, move_op, false)?;
                     write_set_mut.insert((state_key, write_op));
                 },
                 AggregatorChange::Merge(delta_op) => delta_change_set.insert((state_key, delta_op)),
                 AggregatorChange::Delete => {
+                    // FIXME(alden): should we ensure a deletion in the write set already?
                     let write_op = woc.convert(&state_key, MoveStorageOp::Delete, false)?;
                     write_set_mut.insert((state_key, write_op));
                 },
