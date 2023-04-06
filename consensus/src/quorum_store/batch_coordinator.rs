@@ -17,7 +17,7 @@ use tokio::sync::{mpsc::Receiver, oneshot};
 #[derive(Debug)]
 pub enum BatchCoordinatorCommand {
     Shutdown(oneshot::Sender<()>),
-    NewBatch(Box<Vec<Batch>>),
+    NewBatch(Vec<Batch>),
 }
 
 pub struct BatchCoordinator {

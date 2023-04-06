@@ -131,6 +131,7 @@ impl Batch {
         epoch: u64,
         expiration: u64,
         batch_author: PeerId,
+        gas_bucket_start: u64,
     ) -> Self {
         let payload = BatchPayload::new(payload);
         let batch_info = BatchInfo::new(
@@ -141,6 +142,7 @@ impl Batch {
             payload.hash(),
             payload.num_txns() as u64,
             payload.num_bytes() as u64,
+            gas_bucket_start,
         );
         Self {
             batch_info,

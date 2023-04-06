@@ -3,10 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::config::MAX_APPLICATION_MESSAGE_SIZE;
+use aptos_global_constants::DEFAULT_BUCKETS;
 use serde::{Deserialize, Serialize};
-
-pub const DEFAULT_BROADCAST_BUCKETS: &[u64] =
-    &[0, 150, 300, 500, 1000, 3000, 5000, 10000, 100000, 1000000];
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Eq, Serialize)]
 #[serde(default, deny_unknown_fields)]
@@ -48,7 +46,7 @@ impl Default for MempoolConfig {
             default_failovers: 3,
             system_transaction_timeout_secs: 600,
             system_transaction_gc_interval_ms: 60_000,
-            broadcast_buckets: DEFAULT_BROADCAST_BUCKETS.to_vec(),
+            broadcast_buckets: DEFAULT_BUCKETS.to_vec(),
             eager_expire_threshold_ms: Some(10_000),
             eager_expire_time_ms: 3_000,
         }

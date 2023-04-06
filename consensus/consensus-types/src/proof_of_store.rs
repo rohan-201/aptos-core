@@ -75,6 +75,7 @@ pub struct BatchInfo {
     digest: HashValue,
     num_txns: u64,
     num_bytes: u64,
+    gas_bucket_start: u64,
 }
 
 impl BatchInfo {
@@ -86,6 +87,7 @@ impl BatchInfo {
         digest: HashValue,
         num_txns: u64,
         num_bytes: u64,
+        gas_bucket_start: u64,
     ) -> Self {
         Self {
             author,
@@ -95,6 +97,7 @@ impl BatchInfo {
             digest,
             num_txns,
             num_bytes,
+            gas_bucket_start,
         }
     }
 
@@ -124,6 +127,10 @@ impl BatchInfo {
 
     pub fn num_bytes(&self) -> u64 {
         self.num_bytes
+    }
+
+    pub fn gas_bucket_start(&self) -> u64 {
+        self.gas_bucket_start
     }
 }
 
