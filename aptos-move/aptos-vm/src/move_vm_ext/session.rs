@@ -356,13 +356,13 @@ where
         let mut write_set_mut = WriteSetMut::new(Vec::new());
         let mut delta_change_set = DeltaChangeSet::empty();
         let mut new_slot_metadata: Option<StateValueMetadata> = None;
-        if remote.vm().features().is_storage_slot_metadata_enabled() {
-            if let Some(payer) = new_slot_payer {
-                if let Some(current_time) = current_time {
-                    new_slot_metadata = Some(StateValueMetadata::new(payer, 0, current_time));
-                }
+        // if remote.vm().features().is_storage_slot_metadata_enabled() {
+        if let Some(payer) = new_slot_payer {
+            if let Some(current_time) = current_time {
+                new_slot_metadata = Some(StateValueMetadata::new(payer, 0, current_time));
             }
         }
+        // }
         let woc = WriteOpConverter {
             remote,
             new_slot_metadata,
