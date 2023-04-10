@@ -34,7 +34,7 @@ impl Default for QuorumStoreBackPressureConfig {
     }
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct QuorumStoreConfig {
     pub channel_size: usize,
